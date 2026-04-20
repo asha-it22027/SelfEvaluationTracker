@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mind Matrix — Neural Assessment System</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+  <script src="js/translations.js" defer></script>
+  <script src="js/db.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/wellness.js" defer></script>
+  <script src="js/mental_health.js" defer></script>
+  <script src="js/pillar_info.js" defer></script>
+  <script src="js/quiz.js" defer></script>
+  <script src="js/progress.js" defer></script>
+  <script src="js/profile.js" defer></script>
+  <script src="js/dashboard.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       NAVBAR (hidden until logged in)
+  ═══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar" style="display:none">
+    <div class="nav-brand">
+      <span class="nav-logo-dot"></span>
+      <span class="nav-brand-name" id="nav-brand-text">Mind Matrix</span>
+    </div>
+    <div class="nav-links" id="nav-links">
+      <button class="nav-link active" data-page="dashboard" id="nav-dash-text">Dashboard</button>
+      <button class="nav-link" data-page="quiz" id="nav-quiz-text">Take Quiz</button>
+      <button class="nav-link" data-page="progress" id="nav-prog-text">Progress</button>
+      <button class="nav-link" data-page="all-logs" id="nav-logs-text">All Logs</button>
+      <button class="nav-link" data-page="profile" id="nav-prof-text">Profile</button>
+    </div>
+    <div class="nav-user" id="nav-user">
+      <button class="lang-toggle" id="lang-btn" onclick="Lang.toggle()">বাংলায় দেখুন</button>
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span class="nav-username" id="nav-username">User</span>
+      <button class="btn-logout" id="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: AUTH (Login / Register)
+  ═══════════════════════════════════════════ -->
+  <div id="page-auth" class="page active">
+    <div class="auth-hero">
+      <div class="auth-hero-tag" id="auth-tag-text">Neural Assessment System</div>
+      <h1 class="auth-hero-title">Mind Matrix</h1>
+      <p class="auth-hero-sub" id="auth-sub-text">Assess · Track · Improve your mental performance</p>
+    </div>
+
+    <div class="auth-container">
+      <div style="text-align:right; margin-bottom: 1rem;">
+        <button class="lang-toggle" id="lang-btn-auth" onclick="Lang.toggle()">বাংলায় দেখুন</button>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="Auth.switchTab('login')">Login</button>
+        <button class="auth-tab" id="tab-register" onclick="Auth.switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="form-login" class="auth-form">
+        <div class="form-group">
+          <label id="login-email-label">Email address</label>
+          <input type="email" id="login-email" placeholder="you@email.com" />
+        </div>
+        <div class="form-group">
+          <label id="login-pass-label">Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••" />
+        </div>
+        <p class="form-error" id="login-err"></p>
+        <button class="btn-primary full" id="login-btn-text" onclick="Auth.login()">Sign In →</button>
+        <p class="form-footer">No account? <a onclick="Auth.switchTab('register')">Register here</a></p>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="form-register" class="auth-form" style="display:none">
+        <div class="form-group">
+          <label id="reg-name-label">Full name</label>
+          <input type="text" id="reg-name" placeholder="Your full name" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label id="reg-email-label">Email</label>
+            <input type="email" id="reg-email" placeholder="you@email.com" />
+          </div>
+          <div class="form-group">
+            <label id="reg-age-label">Age</label>
+            <input type="number" id="reg-age" placeholder="22" min="10" max="99" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="reg-goal-label">Primary goal</label>
+          <select id="reg-goal">
+            <option value="Study">Improve study habits</option>
+            <option value="Focus">Build deep focus</option>
+            <option value="Consistency">Be more consistent</option>
+            <option value="Logic">Sharpen logic & reasoning</option>
+            <option value="Health">Improve health & energy</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="reg-pass-label">Password <span class="label-hint">(min 6 characters)</span></label>
+          <input type="password" id="reg-pass" placeholder="••••••••" />
+        </div>
+        <p class="form-error" id="reg-err"></p>
+        <button class="btn-primary full" id="reg-btn-text" onclick="Auth.register()">Create Account →</button>
+        <p class="form-footer">Have an account? <a onclick="Auth.switchTab('login')">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: DASHBOARD
+  ═══════════════════════════════════════════ -->
+  <div id="page-dashboard" class="page" style="display:none">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2 id="dash-greeting">Good morning!</h2>
+          <p class="page-subtitle" id="dash-date-text">Today is —</p>
+        </div>
+        <button class="btn-primary" id="log-today-btn-text" onclick="openLogModal()">+ Log Today</button>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-grid" id="dash-stats"></div>
+
+      <!-- NEW: Clickable Dimension Cards -->
+      <div class="card card-dim">
+        <div class="card-label" id="dim-label-text">Mind Dimensions (Click for protocols)</div>
+        <div class="pillar-card-grid" id="dash-pillar-cards"></div>
+      </div>
+
+      <!-- Today's Progress Bars -->
+      <div class="card card-dim">
+        <div class="card-label" id="score-label-text">Today's dimension scores</div>
+        <div id="dash-bars"></div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <div class="card chart-card">
+          <div class="card-label" id="trend-label-text">7-day overall trend</div>
+          <div class="chart-wrap"><canvas id="trendChart" role="img" aria-label="7-day overall trend line chart"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-label" id="radar-label-text">Latest radar</div>
+          <div class="chart-wrap"><canvas id="radarChart" role="img" aria-label="Radar chart of dimension scores"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card card-dim">
+        <div class="card-label" id="activity-label-text">Recent activity</div>
+        <div id="dash-activity"></div>
+      </div>
+
+      <!-- NEW: Prayer & Focus Timeline -->
+      <div class="card card-prayer" id="prayer-timeline-section" style="margin-top: 1.5rem;">
+        <div class="card-label" id="prayer-label-text" style="display: flex; justify-content: space-between; align-items: center;">
+          Prayer & Focus Timeline
+          <button class="btn-outline" style="font-size: 11px; padding: 4px 10px;" onclick="App.showPage('timeline')">View Full Protocol →</button>
+        </div>
+        <div class="timeline" id="prayer-timeline"></div>
+      </div>
+
+      <!-- NEW: Islamic Wellness Section -->
+      <div class="card card-wellness" id="wellness-section" style="margin-top: 1.5rem;">
+        <div class="card-label" id="wellness-label-text">Islamic Wellness Perspective</div>
+        <div id="wellness-content"></div>
+      </div>
+
+      <!-- NEW: Daily Reflection Tips -->
+      <div class="card card-reflection" style="margin-top: 1.5rem; border: 1px dashed var(--warn);">
+        <div class="card-label" id="reflection-label-text" style="color: var(--warn)">Spiritual Reflection Tips</div>
+        <div class="reflection-grid" id="reflection-tips"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: TIMELINE (Prayer & Focus)
+  ═══════════════════════════════════════════ -->
+  <div id="page-timeline" class="page" style="display:none">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>Prayer & Focus Timeline</h2>
+          <p class="page-subtitle">Aligning your spiritual rhythm with cognitive performance</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Your Daily Spiritual-Cognitive Flow</div>
+        <div class="timeline" id="full-prayer-timeline" style="margin-top: 1rem">
+          <!-- Rendered by prayer.js -->
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem; background: var(--accent)08; border: 1px dashed var(--accent)40">
+        <div class="card-label">Protocol: The 5-Break System</div>
+        <p style="font-size: 13px; color: var(--muted); line-height: 1.6">
+          Use each Salah as a 'Hard Reset' for your brain. Leave your work entirely during these times. 
+          Scientific research shows that scheduled spiritual breaks reduce decision fatigue and prevent long-term burnout.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: QUIZ
+  ═══════════════════════════════════════════ -->
+  <div id="page-quiz" class="page" style="display:none">
+    <div class="page-content">
+      <div id="quiz-intro">
+        <div class="page-header">
+          <div>
+            <h2 id="quiz-title-text">Mind Assessment</h2>
+            <p class="page-subtitle" id="quiz-sub-text">50 questions across 5 dimensions</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-label" id="assessment-sections-label">Assessment Sections</div>
+          <div class="quiz-cat-grid" id="quiz-cat-overview">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap">
+          <button class="btn-primary large" id="full-quiz-btn-text" onclick="Quiz.start('full')">Full Mind Assessment →</button>
+          <button class="btn-outline large" id="mh-quiz-btn-text" style="border-color: var(--accent3); color: var(--accent3)" onclick="Quiz.start('mh')">🌙 Mental Health Only</button>
+        </div>
+      </div>
+
+      <div id="quiz-active" style="display:none">
+        <div class="quiz-top-bar">
+          <div class="quiz-cat-label" id="q-cat-label">Category</div>
+          <div class="quiz-counter" id="q-counter">Q 1 / 50</div>
+        </div>
+        <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="q-progress"></div></div>
+        <div class="quiz-question-card" id="q-text"></div>
+        <div class="quiz-options" id="q-options"></div>
+        <div class="quiz-nav">
+          <button class="btn-outline" id="back-btn-text" onclick="Quiz.prev()">← Back</button>
+          <button class="btn-primary" id="next-btn-text" onclick="Quiz.next()" disabled>Next →</button>
+        </div>
+      </div>
+
+      <div id="quiz-result" style="display:none">
+        <div class="result-header">
+          <div class="result-tag" id="assessment-complete-tag">Assessment Complete</div>
+          <h2 id="result-title-text">Your Results</h2>
+        </div>
+        <div class="result-scores" id="result-scores"></div>
+        <div class="card" style="margin-top:1.5rem">
+          <div class="card-label" id="radar-chart-label">Radar chart</div>
+          <div class="chart-wrap tall"><canvas id="quizRadar" role="img" aria-label="Quiz result radar chart"></canvas></div>
+        </div>
+        <div id="result-feedback"></div>
+        <div id="result-routine"></div>
+        <div style="text-align:center;margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+          <button class="btn-primary" id="save-log-btn-text" onclick="Quiz.saveAsLog()">Save to Progress Log</button>
+          <button class="btn-outline" id="retake-btn-text" onclick="Quiz.retake()">Retake Quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: PROGRESS
+  ═══════════════════════════════════════════ -->
+  <div id="page-progress" class="page" style="display:none">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2 id="progress-title-text">Progress Tracker</h2>
+          <p class="page-subtitle" id="progress-sub-text">Your daily performance over time</p>
+        </div>
+        <button class="btn-primary" id="log-today-btn-progress" onclick="openLogModal()">+ Log Today</button>
+      </div>
+
+      <div class="card card-dim">
+        <div class="card-label" id="all-dim-title">All dimensions — daily scores</div>
+        <div class="legend" id="dim-legend"></div>
+        <div class="chart-wrap tall"><canvas id="allDimChart" role="img" aria-label="Multi-dimension daily progress chart"></canvas></div>
+      </div>
+
+      <!-- NEW: Mental Health Progress Tracker -->
+      <div class="card card-mh" style="margin-top: 1.5rem">
+        <div class="card-label" id="mh-history-title" style="color: var(--accent3)">🌙 Mental Health Diagnostic History</div>
+        <div class="legend" id="mh-legend"></div>
+        <div class="charts-row">
+          <div class="card chart-card" style="background: transparent; border: none; padding: 0;">
+            <div class="card-label" id="sev-trend-title" style="font-size: 11px;">Severity Trend</div>
+            <div class="chart-wrap"><canvas id="mhProgressChart" role="img" aria-label="Mental health progress over time"></canvas></div>
+          </div>
+          <div class="card chart-card" style="background: transparent; border: none; padding: 0;">
+            <div class="card-label" id="latest-radar-title" style="font-size: 11px;">Latest Diagnostic Radar</div>
+            <div class="chart-wrap"><canvas id="mhRadarChart" role="img" aria-label="Latest mental health radar chart"></canvas></div>
+          </div>
+        </div>
+        <p id="mh-note-text" style="font-size: 11px; color: var(--muted); margin-top: 10px;">Note: Lower scores (0-5) are better for mental health dimensions.</p>
+      </div>
+
+      <div class="charts-row">
+        <div class="card chart-card">
+          <div class="card-label" id="latest-bar-title">Latest scores — bar chart</div>
+          <div class="chart-wrap"><canvas id="barChart" role="img" aria-label="Bar chart of latest dimension scores"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-label" id="avg-trend-title">Overall average trend</div>
+          <div class="chart-wrap"><canvas id="avgTrendChart" role="img" aria-label="Overall average score trend"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: ALL LOGS
+  ═══════════════════════════════════════════ -->
+  <div id="page-all-logs" class="page" style="display:none">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2 id="logs-title-text">All Log Entries</h2>
+          <p class="page-subtitle" id="logs-sub-text">Your complete history of assessments</p>
+        </div>
+      </div>
+      <div id="all-logs-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: PROFILE
+  ═══════════════════════════════════════════ -->
+  <div id="page-profile" class="page" style="display:none">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2 id="profile-title-text">Profile</h2>
+          <p class="page-subtitle" id="profile-sub-text">Your account & statistics</p>
+        </div>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="card profile-hero-card" id="profile-info-card"></div>
+
+      <!-- Edit Form -->
+      <div class="card" style="margin-top:1rem">
+        <div class="card-label" id="edit-profile-title">Edit profile</div>
+        
+        <div class="form-group">
+          <label id="label-avatar">Profile Picture</label>
+          <div style="display:flex; align-items:center; gap:15px; margin-top:10px">
+            <div id="edit-avatar-preview" style="width:60px; height:60px; border-radius:50%; background:var(--surface); display:flex; align-items:center; justify-content:center; border:1px solid var(--border); overflow:hidden"></div>
+            <input type="file" id="edit-avatar-input" accept="image/*" style="font-size:12px; border:none; background:transparent; padding:0" onchange="Profile.handleAvatarChange(event)" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label id="label-name">Full name</label>
+            <input type="text" id="edit-name" />
+          </div>
+          <div class="form-group">
+            <label id="label-age">Age</label>
+            <input type="number" id="edit-age" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="label-goal">Primary goal</label>
+          <select id="edit-goal">
+            <option value="Study">Improve study habits</option>
+            <option value="Focus">Build deep focus</option>
+            <option value="Consistency">Be more consistent</option>
+            <option value="Logic">Sharpen logic & reasoning</option>
+            <option value="Health">Improve health & energy</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="label-bio">Bio</label>
+          <textarea id="edit-bio" rows="3" placeholder="Tell us something about yourself..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-save-profile" onclick="Profile.save()">Save Changes</button>
+          <button class="btn-danger" id="btn-delete-account" onclick="Profile.deleteAccount()">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL: Log Progress
+  ═══════════════════════════════════════════ -->
+  <div id="modal-overlay" class="modal-overlay" style="display:none" onclick="closeLogModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-header-title">Log today's progress</h3>
+        <button class="modal-close" onclick="closeLogModal()">✕</button>
+      </div>
+      <p class="modal-subtitle" id="modal-date"></p>
+      <div id="modal-sliders"></div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="Progress.saveLog()">Save Log</button>
+        <button class="btn-outline" onclick="closeLogModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE: PILLAR DETAIL (Full View)
+  ═══════════════════════════════════════════ -->
+  <div id="page-pillar-detail" class="page" style="display:none; background: var(--bg); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; overflow-y: auto;">
+    <div class="page-content" style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <div id="pillar-detail-header-content">
+          <!-- Title & Desc here -->
+        </div>
+        <button class="btn-outline" onclick="App.showPage('dashboard')" style="padding: 8px 16px; border-radius: 8px;">✕ Close</button>
+      </div>
+      <div id="pillar-detail-body">
+        <!-- Main content here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+</body>
+</html>

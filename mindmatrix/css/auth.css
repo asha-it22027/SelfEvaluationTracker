@@ -1,0 +1,68 @@
+/* ═══════════════════════════════════════════════
+   Auth Page Styles
+═══════════════════════════════════════════════ */
+
+#page-auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3rem 1rem 4rem;
+}
+
+.auth-hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.auth-hero-tag {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: .6rem;
+}
+.auth-hero-title {
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 2px;
+}
+.auth-hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: .5rem;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+.auth-tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: .15s;
+  letter-spacing: .5px;
+}
+.auth-tab:hover { color: var(--accent2); border-color: rgba(0,229,255,.3); }
+.auth-tab.active {
+  background: rgba(124,80,255,.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}
