@@ -2,6 +2,10 @@
    Auth Page Styles
 ═══════════════════════════════════════════════ */
 
+#page-auth.active {
+  display: flex;
+}
+
 #page-auth {
   min-height: 100vh;
   width: 100%;
@@ -111,7 +115,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 950px) {
+@media (max-width: 768px) {
   #page-auth {
     flex-direction: column;
     justify-content: center;

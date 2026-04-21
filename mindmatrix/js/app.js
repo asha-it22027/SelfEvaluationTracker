@@ -12,7 +12,15 @@ const App = (() => {
     
     PAGES.forEach(p => {
       const el = document.getElementById('page-' + p);
-      if (el) el.style.display = (p === name ? 'block' : 'none');
+      if (el) {
+        if (p === name) {
+          el.classList.add('active');
+          el.style.display = ''; // Let CSS handle display for active page
+        } else {
+          el.classList.remove('active');
+          el.style.display = 'none';
+        }
+      }
     });
 
     // Nav Highlighting
